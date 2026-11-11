@@ -1,0 +1,29 @@
+# Prepares the GitHub Actions environment that the Copilot cloud agent works in, so the
+# .NET SDK and every NuGet package are ready before the agent starts on a task.
+# The job must be named `copilot-setup-steps`. Run it from the Actions tab to check it works.
+name: Copilot Setup Steps
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore NuGet packages
+        run: dotnet restore

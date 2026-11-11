@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:5090
+
+### List the books
+GET {{baseUrl}}/books
+
+### Borrow a book
+POST {{baseUrl}}/loans
+Content-Type: application/json
+
+{
+  "memberId": "M-100",
+  "isbn": "9780134685991"
+}
+
+### A member who is not in the directory
+POST {{baseUrl}}/loans
+Content-Type: application/json
+
+{
+  "memberId": "M-999",
+  "isbn": "9780134685991"
+}
+
+### Look up a member (Morgan owes 12.50 in fines)
+GET {{baseUrl}}/members/M-300
