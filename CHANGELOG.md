@@ -7,6 +7,7 @@ All notable changes to the Library lending service are recorded here.
 ### Added
 
 - Export a member's loan history as JSON.
+- Added `GET /loans/overdue` to list active overdue loans, most overdue first, with days overdue and late fees if returned today.
 
 ## [1.0.0]
 
