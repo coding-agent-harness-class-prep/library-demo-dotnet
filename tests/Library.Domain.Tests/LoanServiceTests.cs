@@ -61,6 +61,82 @@ public class LoanServiceTests
     }
 
     [Fact]
+    public void GetOverdue_NoLoans_ReturnsEmptyList()
+    {
+        Assert.Empty(_service.GetOverdue());
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(1)]
+    public void GetOverdue_DueDateBoundary_OnlyIncludesPastDueLoans(int daysAfterDue)
+    {
+        var loan = _service.Borrow("M-100", EffectiveJava).Loan!;
+        _clock.Today = loan.DueOn.AddDays(daysAfterDue);
+
+        var overdue = _service.GetOverdue();
+
+        if (daysAfterDue > 0)
+        {
+            Assert.Equal(loan.Id, Assert.Single(overdue).LoanId);
+        }
+        else
+        {
+            Assert.Empty(overdue);
+        }
+    }
+
+    [Theory]
+    [InlineData("M-100", 2, 0)]
+    [InlineData("M-100", 5, 1.25)]
+    [InlineData("M-100", 60, 10)]
+    [InlineData("M-200", 5, 0.63)]
+    [InlineData("M-300", 5, 0)]
+    [InlineData("M-300", 8, 0.25)]
+    public void GetOverdue_OverdueLoan_ReturnsDetailsWithPolicyFee(string memberId, int daysOverdue, decimal expectedFee)
+    {
+        var loan = _service.Borrow(memberId, EffectiveJava).Loan!;
+        _clock.Today = loan.DueOn.AddDays(daysOverdue);
+
+        var overdue = Assert.Single(_service.GetOverdue());
+
+        Assert.Equal(loan.Id, overdue.LoanId);
+        Assert.Equal(loan.Isbn, overdue.Isbn);
+        Assert.Equal(loan.MemberId, overdue.MemberId);
+        Assert.Equal(loan.DueOn, overdue.DueOn);
+        Assert.Equal(daysOverdue, overdue.DaysOverdue);
+        Assert.Equal(expectedFee, overdue.FeeIfReturnedToday);
+        Assert.True(loan.IsActive);
+        Assert.Equal(0m, loan.LateFee);
+        Assert.Null(loan.ReturnedOn);
+    }
+
+    [Fact]
+    public void GetOverdue_MultipleLoans_ReturnsMostOverdueFirst()
+    {
+        var newer = _service.Borrow("M-200", EffectiveJava).Loan!;
+        var older = _service.Borrow("M-100", EffectiveJava).Loan!;
+        var returned = _service.Borrow("M-100", "9781617294532").Loan!;
+        _service.Return(returned.Id);
+        _clock.Today = newer.DueOn.AddDays(5);
+
+        var overdue = _service.GetOverdue();
+
+        Assert.Equal(new[] { older.Id, newer.Id }, overdue.Select(loan => loan.LoanId));
+    }
+
+    [Fact]
+    public void GetOverdue_ReturnedLoan_ReturnsEmptyList()
+    {
+        var loan = _service.Borrow("M-100", EffectiveJava).Loan!;
+        _clock.Today = loan.DueOn.AddDays(5);
+        _service.Return(loan.Id);
+
+        Assert.Empty(_service.GetOverdue());
+    }
+
+    [Fact]
     public void Return_OnTime_ChargesNothing()
     {
         var loan = _service.Borrow("M-100", EffectiveJava).Loan!;
