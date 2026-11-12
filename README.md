@@ -37,6 +37,7 @@ are pinned in `Directory.Packages.props` and each project commits its `packages.
 | `GET` | `/members/{id}` | A member, including outstanding fines |
 | `POST` | `/loans` | Borrow a book (`{ "memberId", "isbn" }`): 201, 400 with policy codes, or 404 |
 | `GET` | `/loans/{id}` | One loan, or 404 |
+| `GET` | `/loans/overdue` | Active overdue loans, most overdue first, with days overdue and fees if returned today |
 | `POST` | `/loans/{id}/return` | Return a book; any late fee is added to the member's fines |
 
 ## Lending rules in brief

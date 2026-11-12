@@ -28,6 +28,8 @@ app.MapGet("/members/{id}", (string id, IMemberDirectory members) =>
 app.MapGet("/loans/{id:guid}", (Guid id, LoanService service) =>
     service.Find(id) is { } loan ? Results.Ok(loan) : Results.NotFound());
 
+app.MapGet("/loans/overdue", (LoanService service) => Results.Ok(service.GetOverdue()));
+
 app.MapPost("/loans", (BorrowRequest request, LoanService service) =>
 {
     var outcome = service.Borrow(request.MemberId, request.Isbn);
