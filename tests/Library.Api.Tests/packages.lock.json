@@ -437,11 +437,18 @@
       "library.api": {
         "type": "Project",
         "dependencies": {
-          "Library.Domain": "[1.0.0, )"
+          "Library.Domain": "[1.0.0, )",
+          "Newtonsoft.Json": "[12.0.3, )"
         }
       },
       "library.domain": {
         "type": "Project"
+      },
+      "Newtonsoft.Json": {
+        "type": "CentralTransitive",
+        "requested": "[12.0.3, )",
+        "resolved": "12.0.3",
+        "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
       }
     }
   }

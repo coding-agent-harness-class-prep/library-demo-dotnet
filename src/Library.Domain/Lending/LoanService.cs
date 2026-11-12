@@ -82,6 +82,9 @@ public sealed class LoanService(
 
     public Loan? Find(Guid loanId) => loans.Find(loanId);
 
+    public IReadOnlyList<Loan> ForMember(string memberId) =>
+        [.. loans.ForMember(memberId).OrderBy(loan => loan.BorrowedOn).ThenBy(loan => loan.Id)];
+
     public IReadOnlyList<OverdueLoan> GetOverdue()
     {
         var today = Today();

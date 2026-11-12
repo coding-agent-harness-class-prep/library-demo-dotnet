@@ -5,6 +5,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.14" />
+    <PackageVersion Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Json.NET 12 is used only to serialize export data, never to deserialize input. -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-5crp-9r3c-p9vr" />
   </ItemGroup>
 </Project>

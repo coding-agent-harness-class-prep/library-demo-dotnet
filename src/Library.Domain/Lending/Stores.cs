@@ -22,6 +22,8 @@ public interface ILoanRepository
     Loan? Find(Guid id);
 
     IReadOnlyList<Loan> Active();
+
+    IReadOnlyList<Loan> ForMember(string memberId);
 }
 
 public sealed class InMemoryBookCatalog : IBookCatalog
@@ -61,4 +63,6 @@ public sealed class InMemoryLoanRepository : ILoanRepository
     public Loan? Find(Guid id) => _loans.GetValueOrDefault(id);
 
     public IReadOnlyList<Loan> Active() => [.. _loans.Values.Where(l => l.IsActive).OrderBy(l => l.DueOn)];
+
+    public IReadOnlyList<Loan> ForMember(string memberId) => [.. _loans.Values.Where(l => l.MemberId == memberId)];
 }
